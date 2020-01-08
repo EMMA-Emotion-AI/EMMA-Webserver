@@ -33,10 +33,6 @@ server {
 
     server_name emma-ai.com www.emma-ai.com;
 
-    location /api {
-        proxy_pass http://localhost:3000/$request_uri;
-    }
-
     root /var/www/emma-ai.com/;
     index index.html;
 
@@ -68,6 +64,10 @@ server {
         log_not_found off;
         access_log off;
     }        
+
+    location /api {
+        proxy_pass http://localhost:3000/;
+    }
     
     location ~* \.(gif|jpe?g|png|css)$ {
         expires 30d;
