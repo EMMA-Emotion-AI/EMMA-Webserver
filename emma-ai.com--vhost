@@ -33,6 +33,10 @@ server {
 
     server_name emma-ai.com www.emma-ai.com;
 
+    location /api {
+        proxy_pass http://localhost:3000/$request_uri;
+    }
+
     root /var/www/emma-ai.com/;
     index index.html;
 
