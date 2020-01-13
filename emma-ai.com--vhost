@@ -6,6 +6,14 @@
 #--------------------------------#
 ##################################
 
+map $sent_http_content_type $expires {
+    default                off;
+    text/html              epoch;
+    text/css               max;
+    application/javascript max;
+    ~image/                max;
+}
+
 server {
     listen 80;
     listen [::]:80;
@@ -21,7 +29,7 @@ server {
     }
 }
 
- server {
+server {
     listen 443 ssl http2;
     listen [::]:443 ssl http2;
 
@@ -30,10 +38,11 @@ server {
     add_header X-Content-Type-Options nosniff;
     add_header X-Frame-Options "SAMEORIGIN";
     add_header X-XSS-Protection "1; mode=block";
-    add_header X-Robots-Tag none;
     add_header X-Download-Options noopen;
     add_header X-Permitted-Cross-Domain-Policies none;
     add_header Strict-Transport-Security 'max-age=31536000; preload';
+
+    expires $expires;
 
     server_name emma-ai.com www.emma-ai.com;
 
@@ -59,6 +68,44 @@ server {
     # $ mkdir /etc/nginx/ssl && cd /etc/nginx/ssl
     # $ openssl dhparam -out dhparam.pem 4096
     ssl_dhparam /etc/nginx/ssl/dhparam.pem;
+
+    gzip on;
+    gzip_comp_level 5;
+    gzip_min_length 256;
+    gzip_proxied any;
+    gzip_vary on;
+    gzip_types
+        application/atom+xml
+        application/geo+json
+        application/javascript
+        application/x-javascript
+        application/json
+        application/ld+json
+        application/manifest+json
+        application/rdf+xml
+        application/rss+xml
+        application/vnd.ms-fontobject
+        application/wasm
+        application/x-web-app-manifest+json
+        application/xhtml+xml
+        application/xml
+        font/eot
+        font/otf
+        font/ttf
+        image/bmp
+        image/svg+xml
+        text/cache-manifest
+        text/calendar
+        text/css
+        text/javascript
+        text/markdown
+        text/plain
+        text/xml
+        text/vcard
+        text/vnd.rim.location.xloc
+        text/vtt
+        text/x-component
+        text/x-cross-domain-policy;
 
     # Load configuration files for the default server block.
     include /etc/nginx/default.d/*.conf;
